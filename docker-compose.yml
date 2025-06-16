@@ -1,0 +1,12 @@
+services:
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: task-manager2-api
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./server/.env
+    environment:
+      - NODE_ENV=production
