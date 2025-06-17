@@ -1,5 +1,6 @@
 const express = require("express");
 const testRoute = require("./routes/testRoute");
+const { default: errorHandler } = require("./middleware/errorHandler");
 
 const app = express();
 
@@ -10,5 +11,7 @@ app.get('/test', (request, response) => {
 });
 
 app.use("/test", testRoute);
+
+app.use(errorHandler);
 
 module.exports = app;
