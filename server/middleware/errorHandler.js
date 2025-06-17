@@ -1,4 +1,4 @@
-export default function errorHandler(err, request, response, next) {
+export default function errorHandler(err, request, response) {
     console.log(err.stack);
 
     const statusCode = response.statusCode && response.statusCode !== 200 ? response.statusCode : 500;
