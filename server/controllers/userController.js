@@ -86,10 +86,23 @@ const updateUserPassword = catchAsync(async (request, response) => {
     });
 });
 
+// GET /api/users/me
+const getCurrentUser = catchAsync(async (request, response) => {
+    const user = await User.findById(request.user._id).select("-password -salt");
+
+    if (!user) {
+        response.status(404);
+        throw new Error("User not found");
+    }
+
+    response.status(200).json(user);
+});
+
 module.exports = {
     registerUser,
     loginUser,
     deleteUser,
     updateUserPassword,
+    getCurrentUser,
 };
 

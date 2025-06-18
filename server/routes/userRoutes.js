@@ -3,7 +3,8 @@ const {
     registerUser,
     loginUser,
     updateUserPassword,
-    deleteUser
+    deleteUser,
+    getCurrentUser,
 } = require("../controllers/userController");
 const router = express.Router();
 const requireAuth = require("../middleware/requireAuth");
@@ -19,5 +20,8 @@ router.patch("/update-password", requireAuth, updateUserPassword);
 
 // DELETE
 router.delete("/", requireAuth, deleteUser)
+
+// GET Get current user details (email, username only)
+router. get("/me", requireAuth, getCurrentUser);
 
 module.exports = router;
