@@ -3,7 +3,8 @@ const {
     registerUser,
     loginUser,
     updateUserPassword,
-    deleteUser
+    deleteUser,
+    getCurrentUser,
 } = require("../controllers/userController");
 const router = express.Router();
 const requireAuth = require("../middleware/requireAuth");
