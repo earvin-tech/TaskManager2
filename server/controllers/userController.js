@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const catchAsync = require("../utils/catchAsync");
+const generateToken = require("../utils/generateToken");
 
 // POST /api/users/register
 const registerUser = catchAsync( async (request, response) => {
@@ -14,8 +15,11 @@ const registerUser = catchAsync( async (request, response) => {
     const user = new User({ username, email, password });
     await user.save();
 
+    const token = generateToken(user._id);
+
     response.status(201).json({
         message: "User registered successfully",
+        token,
         user: {
             id: user._id,
             username: user.username,
@@ -34,8 +38,11 @@ const loginUser = catchAsync(async (request, response) => {
     throw new Error("Invalid email or password");
   }
 
+  const token = generateToken(user._id);
+
   response.status(200).json({
     message: "Login successful",
+    token,
     user: {
       id: user._id,
       username: user.username,
