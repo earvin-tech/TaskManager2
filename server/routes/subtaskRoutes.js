@@ -5,8 +5,10 @@ const {
     updateSubtask,
     deleteSubtask,
 } = require("../controllers/subtaskController");
-
 const router = express.Router({ mergeParams: true });
+const requireAuth = require("../middleware/requireAuth");
+
+router.use(requireAuth);
 
 router.post("/tasks/:taskId/subtasks", createSubtask);
 router.get("/tasks/:taskId/subtasks", getSubtasksForTask);

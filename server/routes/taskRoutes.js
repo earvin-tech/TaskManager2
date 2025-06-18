@@ -6,8 +6,10 @@ const {
     updateTask,
     deleteTask,
  } = require("../controllers/taskController");
-
  const router = express.Router();
+ const requireAuth = require("../middleware/requireAuth");
+
+router.use(requireAuth);
 
  // All routes below will assume tasks are user-specific (request.user._id)
 
