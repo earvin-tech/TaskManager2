@@ -6,15 +6,19 @@ const {
     updateTask,
     deleteTask,
  } = require("../controllers/taskController");
- const router = express.Router();
- const requireAuth = require("../middleware/requireAuth");
+const router = express.Router();
+const requireAuth = require("../middleware/requireAuth");
+const {
+    validateCreateTask,
+    validateUpdateTask,
+} = require("../middleware/validateTaskInput");
 
 router.use(requireAuth);
 
  // All routes below will assume tasks are user-specific (request.user._id)
 
  // POST Create a new task
- router.post("/", createTask);
+ router.post("/", validateCreateTask, createTask);
 
  // GET Get all tasks for the logged-in user
  router.get("/", getAllTasks);
@@ -23,7 +27,7 @@ router.use(requireAuth);
  router.get("/:id", getTaskById);
 
  // PATCH Update a task by ID (if user owns it)
- router.patch("/:id", updateTask);
+ router.patch("/:id", validateUpdateTask, updateTask);
 
  // DELETE Delete a task by ID (if user owns it)
  router.delete(":id", deleteTask);
