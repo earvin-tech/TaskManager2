@@ -16,7 +16,16 @@ const createTask = catchAsync(async (request, response) => {
 
 // GET /api/tasks
 const getAllTasks = catchAsync(async (request, response) => {
-  const tasks = await Task.find({ user: request.user._id });
+  const filters = { user: request.user._id };
+
+  if (request.query.status) {
+    filters.status = request.query.status;
+  }
+
+  const sortField = request.query.sortBy || "createdAt";
+  const sortOrder = { [sortField]: sortOrder };
+
+  const tasks = await Task.find(filters).sort(sortOptions);
   response.status(200).json(tasks);
 });
 
