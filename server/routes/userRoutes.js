@@ -8,15 +8,19 @@ const {
 } = require("../controllers/userController");
 const router = express.Router();
 const requireAuth = require("../middleware/requireAuth");
+const {
+    validateRegister,
+    validatePasswordUpdate,
+} = require("../middleware/validateUserInput");
 
 // POST Register
-router.post("/register", registerUser);
+router.post("/register", validateRegister, registerUser);
 
 // POST Login
 router.post("/login", loginUser);
 
 // PATCH Update Password
-router.patch("/update-password", requireAuth, updateUserPassword);
+router.patch("/update-password", requireAuth, validatePasswordUpdate, updateUserPassword);
 
 // DELETE
 router.delete("/", requireAuth, deleteUser)
