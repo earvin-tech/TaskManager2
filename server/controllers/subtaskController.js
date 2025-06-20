@@ -2,13 +2,18 @@ const Subtask = require("../models/Subtask");
 const Task = require("../models/Task");
 const catchAsync = require("../utils/catchAsync");
 
+// 🔐 Helper to throw error with status code
+const throwError = (message, statusCode) => {
+  const err = new Error(message);
+  err.statusCode = statusCode;
+  throw err;
+};
+
 // 🔐 Helper to check if a task belongs to the user
 const verifyTaskOwnership = async (taskId, userId) => {
   const task = await Task.findById(taskId);
   if (!task || task.user.toString() !== userId.toString()) {
-    const error = new Error("Unauthorized or task not found");
-    error.status = 403;
-    throw error;
+    throwError("Unauthorized or task not found", 403);
   }
 };
 
@@ -37,8 +42,7 @@ const getSubtasksForTask = catchAsync(async (request, response) => {
 const updateSubtask = catchAsync(async (request, response) => {
   const subtask = await Subtask.findById(request.params.id);
   if (!subtask) {
-    response.status(404);
-    throw new Error("Subtask not found");
+    throwError("Subtask not found", 404);
   }
 
   await verifyTaskOwnership(subtask.task, request.user._id);
@@ -53,8 +57,7 @@ const updateSubtask = catchAsync(async (request, response) => {
 const deleteSubtask = catchAsync(async (request, response) => {
   const subtask = await Subtask.findById(request.params.id);
   if (!subtask) {
-    response.status(404);
-    throw new Error("Subtask not found");
+    throwError("Subtask not found", 404);
   }
 
   await verifyTaskOwnership(subtask.task, request.user._id);
