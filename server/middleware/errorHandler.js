@@ -1,6 +1,7 @@
 const errorHandler = (err, req, res, next) => {
-    console.error("❌ Error caught by errorHandler:", err);
-
+    if (process.env.NODE_ENV !== "test") {
+        console.error("❌ Error caught by errorHandler:", err);
+    }
     const statusCode = err.statusCode || 500;
 
     res.status(statusCode).json({

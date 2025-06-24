@@ -20,7 +20,8 @@ app.use("/api", subtaskRoutes);
 
 app.use(errorHandler);
 
-console.log("✅ App initialized, exposing routes");
-
+if (process.env.NODE_ENV !== "test") {
+    console.log("✅ App initialized, exposing routes");
+}
 
 module.exports = app;

@@ -4,7 +4,9 @@ const dotenv = require("dotenv");
 dotenv.config();
 
 beforeAll(async () => {
-  console.log("🧪 Clearing DB before test...");
+  if (process.env.NODE_ENV !== "test") {
+    console.log("🧪 Clearing DB before test...");
+  }
   await mongoose.connect(process.env.MONGO_URI);
 });
 
