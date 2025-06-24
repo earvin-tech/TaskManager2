@@ -1,33 +1,36 @@
 const express = require("express");
 const {
-    registerUser,
-    loginUser,
-    updateUserPassword,
-    deleteUser,
-    getCurrentUser,
+  registerUser,
+  loginUser,
+  updateUserPassword,
+  deleteUser,
+  getCurrentUser,
 } = require("../controllers/userController");
-const router = express.Router();
-const requireAuth = require("../middleware/requireAuth");
+
 const {
-    validateRegister,
-    validatePasswordUpdate,
-    validateLogin,
-    validateDeleteUser
+  validateRegister,
+  validatePasswordUpdate,
+  validateLogin,
+  validateDeleteUser,
 } = require("../middleware/validateUserInput");
 
-// POST Register
+const requireAuth = require("../middleware/requireAuth");
+
+const router = express.Router();
+
+// POST /api/users — Register user
 router.post("/register", validateRegister, registerUser);
 
-// POST Login
+// POST /api/users/login — Login
 router.post("/login", validateLogin, loginUser);
 
-// PATCH Update Password
-router.patch("/update-password", requireAuth, validatePasswordUpdate, updateUserPassword);
+// GET /api/users/me — Get current user
+router.get("/me", requireAuth, getCurrentUser);
 
-// DELETE
-router.delete("/", requireAuth, validateDeleteUser, deleteUser)
+// PATCH /api/users/me — Update user password
+router.patch("/me", requireAuth, validatePasswordUpdate, updateUserPassword);
 
-// GET Get current user details (email, username only)
-router. get("/me", requireAuth, getCurrentUser);
+// DELETE /api/users/me — Delete account
+router.delete("/me", requireAuth, validateDeleteUser, deleteUser);
 
 module.exports = router;

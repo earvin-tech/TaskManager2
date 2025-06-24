@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const crypto = require("mode:crypto");
+const crypto = require("node:crypto");
 
 const userSchema = new mongoose.Schema(
     {

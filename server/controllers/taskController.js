@@ -1,13 +1,20 @@
 const Task = require("../models/Task");
 const catchAsync = require("../utils/catchAsync");
 
+// Helper to throw error with status
+const throwError = (message, statusCode) => {
+  const err = new Error(message);
+  err.statusCode = statusCode;
+  throw err;
+};
+
 // POST /api/tasks
 const createTask = catchAsync(async (request, response) => {
-  delete request.body.user; // prevent user spoofing
+  delete request.body.user;
 
   const task = new Task({
     ...request.body,
-    user: request.user._id, // force ownership
+    user: request.user._id,
   });
 
   await task.save();
@@ -23,7 +30,7 @@ const getAllTasks = catchAsync(async (request, response) => {
   }
 
   const sortField = request.query.sortBy || "createdAt";
-  const sortOrder = { [sortField]: sortOrder };
+  const sortOptions = { [sortField]: request.query.order === "desc" ? -1 : 1 };
 
   const tasks = await Task.find(filters).sort(sortOptions);
   response.status(200).json(tasks);
@@ -37,8 +44,7 @@ const getTaskById = catchAsync(async (request, response) => {
   });
 
   if (!task) {
-    response.status(404);
-    throw new Error("Task not found");
+    throwError("Task not found", 404);
   }
 
   response.status(200).json(task);
@@ -46,7 +52,7 @@ const getTaskById = catchAsync(async (request, response) => {
 
 // PATCH /api/tasks/:id
 const updateTask = catchAsync(async (request, response) => {
-  delete request.body.user; // prevent changing task ownership
+  delete request.body.user;
 
   const task = await Task.findOneAndUpdate(
     { _id: request.params.id, user: request.user._id },
@@ -55,8 +61,7 @@ const updateTask = catchAsync(async (request, response) => {
   );
 
   if (!task) {
-    response.status(404);
-    throw new Error("Task not found");
+    throwError("Task not found", 404);
   }
 
   response.status(200).json(task);
@@ -70,8 +75,7 @@ const deleteTask = catchAsync(async (request, response) => {
   });
 
   if (!task) {
-    response.status(404);
-    throw new Error("Task not found");
+    throwError("Task not found", 404);
   }
 
   response.status(200).json({ message: "Task deleted successfully" });

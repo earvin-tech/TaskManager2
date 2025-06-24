@@ -2,14 +2,20 @@ const User = require("../models/User");
 const catchAsync = require("../utils/catchAsync");
 const generateToken = require("../utils/generateToken");
 
+// Helper to throw error with status
+const throwError = (message, statusCode) => {
+  const err = new Error(message);
+  err.statusCode = statusCode;
+  throw err;
+};
+
 // POST /api/users/register
 const registerUser = catchAsync(async (request, response) => {
   const { username, email, password } = request.body;
 
   const existing = await User.findOne({ email });
   if (existing) {
-    response.status(409);
-    throw new Error("Email already in use");
+    throwError("Email already in use", 409);
   }
 
   const user = new User({ username, email, password });
@@ -35,8 +41,7 @@ const loginUser = catchAsync(async (request, response) => {
   const user = await User.findOne(email ? { email } : { username });
 
   if (!user || !user.comparePassword(password)) {
-    response.status(401);
-    throw new Error("Invalid credentials");
+    throwError("Invalid credentials", 401);
   }
 
   const token = generateToken(user._id);
@@ -52,14 +57,13 @@ const loginUser = catchAsync(async (request, response) => {
   });
 });
 
-// DELETE /api/users
+// DELETE /api/users/me
 const deleteUser = catchAsync(async (request, response) => {
   const { password } = request.body;
 
   const user = await User.findById(request.user._id);
   if (!user || !user.comparePassword(password)) {
-    response.status(401);
-    throw new Error("Invalid credentials");
+    throwError("Invalid credentials", 401);
   }
 
   await User.deleteOne({ _id: user._id });
@@ -69,19 +73,17 @@ const deleteUser = catchAsync(async (request, response) => {
   });
 });
 
-// PUT /api/users/update-password
+// PATCH /api/users/me
 const updateUserPassword = catchAsync(async (request, response) => {
   const { oldPassword, newPassword } = request.body;
 
   const user = await User.findById(request.user._id);
   if (!user || !user.comparePassword(oldPassword)) {
-    response.status(401);
-    throw new Error("Old password is incorrect");
+    throwError("Old password is incorrect", 401);
   }
 
   if (!newPassword) {
-    response.status(400);
-    throw new Error("New password is required");
+    throwError("New password is required", 400);
   }
 
   user.password = newPassword;
@@ -97,8 +99,7 @@ const getCurrentUser = catchAsync(async (request, response) => {
   const user = await User.findById(request.user._id).select("-password -salt");
 
   if (!user) {
-    response.status(404);
-    throw new Error("User not found");
+    throwError("User not found", 404);
   }
 
   response.status(200).json(user);

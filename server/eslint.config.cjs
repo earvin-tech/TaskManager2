@@ -1,23 +1,38 @@
 const js = require("@eslint/js");
-const globals = require("globals");
-const { defineConfig } = require("eslint/config");
+const node = require("eslint-plugin-node");
+const jest = require("eslint-plugin-jest");
 
-module.exports = defineConfig([
+module.exports = [
+  js.configs.recommended,
+
   {
-    ignores: ["node_modules/", "dist/", "coverage/"],
-
-    files: ["**/*.{js,mjs,cjs}"],
+    files: ["**/*.js"],
     languageOptions: {
       ecmaVersion: "latest",
-      sourceType: "module",
-      globals: globals.node,
+      sourceType: "commonjs", // <-- important for require/module.exports
+      globals: {
+        require: "readonly",
+        module: "readonly",
+        process: "readonly",
+        console: "readonly",
+        __dirname: "readonly",
+        // Jest globals
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        beforeEach: "readonly",
+        afterEach: "readonly",
+        describe: "readonly",
+        test: "readonly",
+        expect: "readonly",
+      },
     },
-    ...js.configs.recommended,
-  },
-  {
-    files: ["**/*.test.js", "**/__tests__/**/*.js"],
-    languageOptions: {
-      globals: globals.jest,
+    plugins: {
+      node,
+      jest,
+    },
+    rules: {
+      "no-unused-vars": "warn",
+      "no-undef": "error",
     },
   },
-]);
+];
