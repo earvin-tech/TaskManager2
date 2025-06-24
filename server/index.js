@@ -1,4 +1,9 @@
 const express = require("express");
+const testRoute = require("./routes/testRoute");
+const errorHandler = require("./middleware/errorHandler");
+const userRoutes = require("./routes/userRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const subtaskRoutes = require("./routes/subtaskRoutes");
 
 const app = express();
 
@@ -7,5 +12,16 @@ app.use(express.json());
 app.get('/test', (request, response) => {
     response.send("Hello World");
 });
+
+app.use("/test", testRoute);
+app.use("/api/users", userRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api", subtaskRoutes);
+
+app.use(errorHandler);
+
+if (process.env.NODE_ENV !== "test") {
+    console.log("✅ App initialized, exposing routes");
+}
 
 module.exports = app;
