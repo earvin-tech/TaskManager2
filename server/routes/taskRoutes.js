@@ -30,6 +30,6 @@ router.use(requireAuth);
  router.patch("/:id", validateUpdateTask, updateTask);
 
  // DELETE Delete a task by ID (if user owns it)
- router.delete(":id", deleteTask);
+ router.delete("/:id", deleteTask);
 
  module.exports = router;

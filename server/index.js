@@ -16,7 +16,7 @@ app.get('/test', (request, response) => {
 app.use("/test", testRoute);
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
-app.use("/api/subtasks", subtaskRoutes);
+app.use("/api", subtaskRoutes);
 
 app.use(errorHandler);
 
