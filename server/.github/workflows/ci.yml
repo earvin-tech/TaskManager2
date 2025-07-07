@@ -1,0 +1,55 @@
+name: Task Manager Backend CI
+
+on: 
+  push:
+    branches: [Development]
+  pull_request: 
+    branches: [Development]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 15 * * *'
+
+jobs: 
+  backend: 
+    name: Test Express API
+    runs-on: ubuntu-latest
+    defaults: 
+      run: 
+        working-directory: server
+    steps: 
+    - uses: actions/checkout@v4
+
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:            
+        node-version: 20
+
+    - name: Install backend dependencies
+      run: npm ci
+
+    - name: Run backend tests (save logs)
+      run: npm test | tee jest.log
+
+    - name: Upload backend test log
+      uses: actions/upload-artifact@v4
+      with:
+        name: backend-jest-log
+        path: server/jest.log
+
+  lint:
+    name: Run ESLint for Client and Server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install all dependencies
+        run: |
+          npm --prefix server ci
+
+      - name: Lint server
+        run: npm --prefix server run lint

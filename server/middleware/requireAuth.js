@@ -6,7 +6,7 @@ const requireAuth = async (req, res, next) => {
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     const error = new Error("Unauthorized: No token provided");
-    error.statusCode = 401; // 🔥 This is what's missing
+    error.statusCode = 401; 
     return next(error);
   }
 

@@ -1,3 +1,4 @@
+/* eslint-disable-next-line no-unused-vars */
 const errorHandler = (err, req, res, next) => {
     if (process.env.NODE_ENV !== "test") {
         console.error("❌ Error caught by errorHandler:", err);
